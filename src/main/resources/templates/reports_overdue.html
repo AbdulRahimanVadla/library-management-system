@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Overdue Books Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="full-container container-reports">
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-clock"></i> Overdue Books Report</h1>
+            <p class="subtitle" th:text="'Total Overdue Books: ' + ${overdueCount}"></p>
+            <p><small><i class="fas fa-calendar"></i> Books that exceeded the 14-day borrowing period</small></p>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="/">Dashboard</a> > 
+            <a href="/reports/dashboard">Reports</a> > 
+            <span>Overdue Books</span>
+        </nav>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- FIXED: Using Thymeleaf URL syntax -->
+        <div class="action-bar">
+            <a th:href="@{/reports/dashboard}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Reports</a>
+            <a th:href="@{/borrows/active}" class="btn btn-primary"><i class="fas fa-clipboard-list"></i> Active Borrows</a>
+            <a th:href="@{/borrows/new}" class="btn btn-success"><i class="fas fa-plus"></i> Borrow New Book</a>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>Student Name</th>
+                        <th>Student ID</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Days Overdue</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="borrow : ${overdueBooks}">
+                        <td th:text="${borrow.book.title}"></td>
+                        <td th:text="${borrow.book.author}"></td>
+                        <td th:text="${borrow.student.name}"></td>
+                        <td th:text="${borrow.student.studentId}"></td>
+                        <td th:text="${#temporals.format(borrow.borrowDate, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${#temporals.format(borrow.dueDate, 'dd/MM/yyyy')}"></td>
+                        <td style="color: #e74c3c; font-weight: bold;">
+                            [[${T(java.time.temporal.ChronoUnit).DAYS.between(borrow.dueDate, T(java.time.LocalDate).now())}]] days
+                        </td>
+                        <td>
+                            <form th:action="@{/borrows/return/{id}(id=${borrow.id})}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-success btn-sm" 
+                                        onclick="return confirm('Are you sure you want to return this book?')">
+                                    <i class="fas fa-undo"></i> Return
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(overdueBooks)}">
+                        <td colspan="8" class="no-data">
+                            <i class="fas fa-party-horn"></i> No overdue books found! All books are returned on time.
+                            <br><small><i class="fas fa-calendar"></i> Overdue books appear when the due date passes the 14-day borrowing period.</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Overdue Information Section -->
+        <div class="status-section">
+            <h3><i class="fas fa-info-circle"></i> How Overdue System Works</h3>
+            <div class="status-grid">
+                <div class="status-item info">
+                    <div class="status-title">Borrowing Period</div>
+                    <div class="status-value">14</div>
+                    <div class="status-unit">days</div>
+                    <div class="status-desc">Standard borrowing duration</div>
+                </div>
+                <div class="status-item warning" th:if="${overdueCount > 0}">
+                    <div class="status-title">Total Overdue</div>
+                    <div class="status-value" th:text="${overdueCount}">0</div>
+                    <div class="status-unit">books</div>
+                    <div class="status-desc">Exceeded due date</div>
+                </div>
+                <div class="status-item success" th:if="${overdueCount == 0}">
+                    <div class="status-title">All Books</div>
+                    <div class="status-value">On Time</div>
+                    <div class="status-unit"><i class="fas fa-check"></i></div>
+                    <div class="status-desc">No overdue books</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 15px; background: #e8f4fd; border-radius: 5px;">
+                <h5><i class="fas fa-clipboard-list"></i> Overdue Rules:</h5>
+                <ul style="margin-bottom: 0;">
+                    <li>Books are due <strong>14 days</strong> after borrowing</li>
+                    <li>Overdue starts from <strong>day after due date</strong></li>
+                    <li>Example: Borrowed on Jan 1 → Due Jan 15 → Overdue from Jan 16</li>
+                    <li>Overdue books are automatically shown here</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Students - LMS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="full-container container-students">
+        <div class="container-students-content">
+            <header>
+                <h1><i class="fas fa-users"></i> Student Management</h1>
+            </header>
+            
+            <nav class="breadcrumb">
+                <a href="/">Dashboard</a> > Students
+            </nav>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <span th:text="${errorMessage}"></span>
+            </div>
+
+            <div class="action-bar">
+                <a href="/students/new" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add New Student</a>
+                
+                <!-- Search Form -->
+                <form th:action="@{/students/search}" method="get" class="search-form">
+                    <input type="text" name="keyword" placeholder="Search students..." th:value="${searchKeyword}">
+                    <button type="submit" class="btn btn-info"><i class="fas fa-search"></i> Search</button>
+                    <a href="/students" class="btn btn-secondary"><i class="fas fa-times"></i> Clear</a>
+                </form>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Student ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="student : ${students}">
+                        <td th:text="${student.id}"></td>
+                        <td th:text="${student.name}"></td>
+                        <td th:text="${student.email}"></td>
+                        <td th:text="${student.studentId}"></td>
+                        <td class="actions">
+                            <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-edit"><i class="fas fa-edit"></i> Edit</a>
+                            <a th:href="@{/borrows/history/{studentId}(studentId=${student.id})}" class="btn btn-info"><i class="fas fa-history"></i> Borrow History</a>
+                            <a th:href="@{/students/delete/{id}(id=${student.id})}" class="btn btn-delete" 
+                               onclick="return confirm('Are you sure you want to delete this student?')"><i class="fas fa-trash"></i> Delete</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(students)}">
+                        <td colspan="5" class="no-data">No students found. <a href="/students/new">Add the first student</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Debug info (remove in production) -->
+            <div style="margin-top: 20px; padding: 10px; background: rgba(255, 255, 255, 0.8); border-radius: 5px;">
+                <small><i class="fas fa-users"></i> Total Students: <span th:text="${#lists.size(students)}">0</span></small>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

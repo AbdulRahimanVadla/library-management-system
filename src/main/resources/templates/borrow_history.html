@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Borrowing History</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="full-container container-borrows">
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-history"></i> Borrowing History - <span th:text="${student.name}"></span></h1>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a href="/">Dashboard</a> > 
+            <a href="/borrow/active">Active Borrows</a> > 
+            <a href="/students">Students</a> > 
+            <span>Borrow History</span>
+        </nav>
+
+        <div class="student-info">
+            <h3><i class="fas fa-user-graduate"></i> Student Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong><i class="fas fa-id-card"></i> Student ID:</strong> <span th:text="${student.studentId}"></span>
+                </div>
+                <div class="info-item">
+                    <strong><i class="fas fa-envelope"></i> Email:</strong> <span th:text="${student.email}"></span>
+                </div>
+                <div class="info-item">
+                    <strong><i class="fas fa-book"></i> Currently Borrowing:</strong> 
+                    <span th:text="${activeBorrows.size()}"></span> books
+                </div>
+                <div class="info-item">
+                    <strong><i class="fas fa-chart-line"></i> Can Borrow More:</strong> 
+                    <span th:if="${remainingLimit > 0}" style="color: #27ae60; font-weight: bold;" th:text="${remainingLimit} + ' more'"></span>
+                    <span th:unless="${remainingLimit > 0}" style="color: #e74c3c; font-weight: bold;">Limit Reached</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-clipboard-list"></i> Currently Borrowed Books</h3>
+            <div th:if="${not activeBorrows.empty}">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Author</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Days Remaining</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="borrow : ${activeBorrows}">
+                            <td th:text="${borrow.book.title}"></td>
+                            <td th:text="${borrow.book.author}"></td>
+                            <td th:text="${#temporals.format(borrow.borrowDate, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#temporals.format(borrow.dueDate, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <span th:if="${#temporals.createNow().isAfter(borrow.dueDate)}" 
+                                      style="color: #e74c3c; font-weight: bold;">
+                                    Overdue: [[${#temporals.between(borrow.dueDate, #temporals.createNow()).getDays()}]]
+                                </span>
+                                <span th:unless="${#temporals.createNow().isAfter(borrow.dueDate)}" 
+                                      style="color: #27ae60; font-weight: bold;">
+                                    [[${#temporals.between(#temporals.createNow(), borrow.dueDate).getDays()}]] days
+                                </span>
+                            </td>
+                            <td>
+                                <form th:action="@{/borrow/return/{id}(id=${borrow.id})}" method="post">
+                                    <button type="submit" class="btn btn-success"><i class="fas fa-undo"></i> Return</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${activeBorrows.empty}" class="alert alert-info">
+                <i class="fas fa-info-circle"></i> This student has no currently borrowed books.
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-history"></i> Borrowing History</h3>
+            <div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Author</th>
+                            <th>ISBN</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="record : ${borrowHistory}">
+                            <td th:text="${record.book.title}"></td>
+                            <td th:text="${record.book.author}"></td>
+                            <td th:text="${record.book.isbn}"></td>
+                            <td th:text="${#temporals.format(record.borrowDate, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#temporals.format(record.dueDate, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <span th:if="${record.returnDate != null}" 
+                                      th:text="${#temporals.format(record.returnDate, 'dd/MM/yyyy')}"></span>
+                                <span th:unless="${record.returnDate != null}">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${record.returned}" style="color: #27ae60; font-weight: bold;"><i class="fas fa-check"></i> Returned</span>
+                                <span th:unless="${record.returned}" style="color: #f39c12; font-weight: bold;"><i class="fas fa-clock"></i> Active</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(borrowHistory)}">
+                            <td colspan="7" class="no-data">No borrowing history found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/borrow/active}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Active Borrows</a>
+            <a th:href="@{/students}" class="btn btn-secondary"><i class="fas fa-users"></i> View All Students</a>
+            <a th:href="@{/borrow/new}" class="btn btn-primary"><i class="fas fa-plus"></i> Borrow New Book</a>
+        </div>
+    </div>
+</body>
+</html>

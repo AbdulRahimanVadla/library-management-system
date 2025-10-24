@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${book.id} != null ? 'Edit Book' : 'Add Book'">Book Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="full-container container-books">
+        <div class="container-content">
+            <header>
+                <h1 th:text="${book.id} != null ? '<i class=\"fas fa-edit\"></i> Edit Book' : '<i class=\"fas fa-book-medical\"></i> Add New Book'">Book Form</h1>
+            </header>
+            
+            <nav class="breadcrumb">
+                <a th:href="@{/}">Dashboard</a> > 
+                <a th:href="@{/books}">Books</a> > 
+                <span th:text="${book.id} != null ? 'Edit' : 'Add New'"></span>
+            </nav>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- Form for new book -->
+            <form th:action="@{/books/save}" th:object="${book}" method="post" class="form book-form" th:if="${book.id == null}">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="title"><i class="fas fa-heading"></i> Title: *</label>
+                        <input type="text" id="title" th:field="*{title}" required class="form-control" 
+                               placeholder="Enter book title" maxlength="255">
+                        <small class="form-text">Book title is required (max 255 characters)</small>
+                        <div th:if="${#fields.hasErrors('title')}" class="field-error" th:errors="*{title}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="author"><i class="fas fa-user-edit"></i> Author: *</label>
+                        <input type="text" id="author" th:field="*{author}" required class="form-control" 
+                               placeholder="Enter author name" maxlength="255">
+                        <small class="form-text">Author name is required (max 255 characters)</small>
+                        <div th:if="${#fields.hasErrors('author')}" class="field-error" th:errors="*{author}"></div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="isbn"><i class="fas fa-barcode"></i> ISBN: *</label>
+                        <input type="text" id="isbn" th:field="*{isbn}" required class="form-control" 
+                               placeholder="Enter ISBN number">
+                        <small class="form-text">ISBN must be unique</small>
+                        <div th:if="${#fields.hasErrors('isbn')}" class="field-error" th:errors="*{isbn}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="publicationYear"><i class="fas fa-calendar-alt"></i> Publication Year:</label>
+                        <input type="number" id="publicationYear" th:field="*{publicationYear}" class="form-control" 
+                               placeholder="Enter publication year" min="1000" max="2025">
+                        <small class="form-text">Year must be between 1000 and current year</small>
+                        <div th:if="${#fields.hasErrors('publicationYear')}" class="field-error" th:errors="*{publicationYear}"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="genre"><i class="fas fa-tags"></i> Genre:</label>
+                    <select id="genre" th:field="*{genre}" class="form-control">
+                        <option value="">Select Genre</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Science">Science</option>
+                        <option value="Technology">Technology</option>
+                        <option value="History">History</option>
+                        <option value="Biography">Biography</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Children">Children</option>
+                        <option value="Young Adult">Young Adult</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <small class="form-text">Select the book's genre</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Book
+                    </button>
+                    <a th:href="@{/books}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Form for editing existing book -->
+            <form th:action="@{/books/update}" th:object="${book}" method="post" class="form book-form" th:unless="${book.id == null}">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="title"><i class="fas fa-heading"></i> Title: *</label>
+                        <input type="text" id="title" th:field="*{title}" required class="form-control" 
+                               placeholder="Enter book title" maxlength="255">
+                        <small class="form-text">Book title is required (max 255 characters)</small>
+                        <div th:if="${#fields.hasErrors('title')}" class="field-error" th:errors="*{title}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="author"><i class="fas fa-user-edit"></i> Author: *</label>
+                        <input type="text" id="author" th:field="*{author}" required class="form-control" 
+                               placeholder="Enter author name" maxlength="255">
+                        <small class="form-text">Author name is required (max 255 characters)</small>
+                        <div th:if="${#fields.hasErrors('author')}" class="field-error" th:errors="*{author}"></div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="isbn"><i class="fas fa-barcode"></i> ISBN: *</label>
+                        <input type="text" id="isbn" th:field="*{isbn}" required class="form-control" 
+                               placeholder="Enter ISBN number">
+                        <small class="form-text">ISBN must be unique</small>
+                        <div th:if="${#fields.hasErrors('isbn')}" class="field-error" th:errors="*{isbn}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="publicationYear"><i class="fas fa-calendar-alt"></i> Publication Year:</label>
+                        <input type="number" id="publicationYear" th:field="*{publicationYear}" class="form-control" 
+                               placeholder="Enter publication year" min="1000" max="2025">
+                        <small class="form-text">Year must be between 1000 and current year</small>
+                        <div th:if="${#fields.hasErrors('publicationYear')}" class="field-error" th:errors="*{publicationYear}"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="genre"><i class="fas fa-tags"></i> Genre:</label>
+                    <select id="genre" th:field="*{genre}" class="form-control">
+                        <option value="">Select Genre</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-Fiction">Non-Fiction</option>
+                        <option value="Science">Science</option>
+                        <option value="Technology">Technology</option>
+                        <option value="History">History</option>
+                        <option value="Biography">Biography</option>
+                        <option value="Fantasy">Fantasy</option>
+                        <option value="Mystery">Mystery</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Children">Children</option>
+                        <option value="Young Adult">Young Adult</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <small class="form-text">Select the book's genre</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="available"><i class="fas fa-toggle-on"></i> Availability:</label>
+                    <select id="available" th:field="*{available}" class="form-control">
+                        <option value="true">Available for borrowing</option>
+                        <option value="false">Not available</option>
+                    </select>
+                    <small class="form-text">Set the book's availability status</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Book
+                    </button>
+                    <a th:href="@{/books}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <a th:href="@{/books/new}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Another Book
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

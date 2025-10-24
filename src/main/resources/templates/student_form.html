@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${student.id} != null ? 'Edit Student' : 'Add Student'">Student Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="full-container container-students">
+        <div class="container-students-content">
+            <header>
+                <h1 th:text="${student.id} != null ? '<i class=\"fas fa-edit\"></i> Edit Student' : '<i class=\"fas fa-user-plus\"></i> Add New Student'">Student Form</h1>
+            </header>
+            
+            <nav class="breadcrumb">
+                <a th:href="@{/}">Dashboard</a> > 
+                <a th:href="@{/students}">Students</a> > 
+                <span th:text="${student.id} != null ? 'Edit' : 'Add'"></span>
+            </nav>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+            </div>
+
+            <!-- Form for new student -->
+            <form th:action="@{/students/save}" th:object="${student}" method="post" class="form" th:if="${student.id == null}">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Full Name: *</label>
+                    <input type="text" id="name" th:field="*{name}" required class="form-control" placeholder="Enter student's full name" maxlength="255">
+                    <small class="form-text">Student name is required</small>
+                    <div th:if="${#fields.hasErrors('name')}" class="field-error" th:errors="*{name}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email: *</label>
+                    <input type="email" id="email" th:field="*{email}" required class="form-control" placeholder="Enter student's email" maxlength="255">
+                    <small class="form-text">Email must be unique and valid</small>
+                    <div th:if="${#fields.hasErrors('email')}" class="field-error" th:errors="*{email}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentId"><i class="fas fa-id-card"></i> Student ID: *</label>
+                    <input type="text" id="studentId" th:field="*{studentId}" required class="form-control" placeholder="Enter student ID" maxlength="50">
+                    <small class="form-text">Student ID must be unique</small>
+                    <div th:if="${#fields.hasErrors('studentId')}" class="field-error" th:errors="*{studentId}"></div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Student
+                    </button>
+                    <a th:href="@{/students}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+
+            <!-- Form for editing existing student -->
+            <form th:action="@{/students/update}" th:object="${student}" method="post" class="form" th:unless="${student.id == null}">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-group">
+                    <label for="name"><i class="fas fa-user"></i> Full Name: *</label>
+                    <input type="text" id="name" th:field="*{name}" required class="form-control" placeholder="Enter student's full name" maxlength="255">
+                    <small class="form-text">Student name is required</small>
+                    <div th:if="${#fields.hasErrors('name')}" class="field-error" th:errors="*{name}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-envelope"></i> Email: *</label>
+                    <input type="email" id="email" th:field="*{email}" required class="form-control" placeholder="Enter student's email" maxlength="255">
+                    <small class="form-text">Email must be unique and valid</small>
+                    <div th:if="${#fields.hasErrors('email')}" class="field-error" th:errors="*{email}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentId"><i class="fas fa-id-card"></i> Student ID: *</label>
+                    <input type="text" id="studentId" th:field="*{studentId}" required class="form-control" placeholder="Enter student ID" maxlength="50">
+                    <small class="form-text">Student ID must be unique</small>
+                    <div th:if="${#fields.hasErrors('studentId')}" class="field-error" th:errors="*{studentId}"></div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Student
+                    </button>
+                    <a th:href="@{/students}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <a th:href="@{/students/new}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Another Student
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

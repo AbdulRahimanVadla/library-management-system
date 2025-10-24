@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Library Reports</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="default-bg">
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-bar"></i> Library Reports Dashboard</h1>
+            <p class="subtitle">Comprehensive library statistics and analytics</p>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a th:href="@{/}">Dashboard</a> > 
+            <span>Reports</span>
+        </nav>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book"></i></div>
+                <h3>Total Books</h3>
+                <div class="stat-number" th:text="${totalBooks}">0</div>
+                <div class="stat-subtitle">In library collection</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <h3>Available Books</h3>
+                <div class="stat-number" th:text="${availableBooks}">0</div>
+                <div class="stat-subtitle">Ready to borrow</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                <h3>Total Students</h3>
+                <div class="stat-number" th:text="${totalStudents}">0</div>
+                <div class="stat-subtitle">Registered students</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book-reader"></i></div>
+                <h3>Active Borrows</h3>
+                <div class="stat-number" th:text="${activeBorrows}">0</div>
+                <div class="stat-subtitle">Currently borrowed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <h3>Overdue Books</h3>
+                <div class="stat-number" th:text="${overdueBooks}">0</div>
+                <div class="stat-subtitle">Past due date</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Total Borrows</h3>
+                <div class="stat-number" th:text="${totalBorrows}">0</div>
+                <div class="stat-subtitle">All-time transactions</div>
+            </div>
+        </div>
+
+        <!-- Quick Reports -->
+        <div class="report-sections">
+            <div class="report-section">
+                <h2><i class="fas fa-bolt"></i> Quick Reports</h2>
+                <div class="report-actions">
+                    <a th:href="@{/reports/overdue}" class="btn btn-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Overdue Report
+                    </a>
+                    <a th:href="@{/reports/borrowing}" class="btn btn-info">
+                        <i class="fas fa-book-reader"></i>
+                        Borrowing Report
+                    </a>
+                    <a th:href="@{/reports/students}" class="btn btn-primary">
+                        <i class="fas fa-users"></i>
+                        Students Report
+                    </a>
+                    <a th:href="@{/reports/books}" class="btn btn-success">
+                        <i class="fas fa-book"></i>
+                        Books Report
+                    </a>
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h2><i class="fas fa-cogs"></i> Quick Actions</h2>
+                <div class="action-grid">
+                    <a th:href="@{/borrows/active}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <div class="action-title">Manage Borrows</div>
+                        <div class="action-desc">View and manage active book borrows</div>
+                    </a>
+                    <a th:href="@{/borrows/new}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-plus"></i></div>
+                        <div class="action-title">Borrow Book</div>
+                        <div class="action-desc">Issue a new book to a student</div>
+                    </a>
+                    <a th:href="@{/books}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-book"></i></div>
+                        <div class="action-title">Manage Books</div>
+                        <div class="action-desc">View and manage book catalog</div>
+                    </a>
+                    <a th:href="@{/students}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-users"></i></div>
+                        <div class="action-title">Manage Students</div>
+                        <div class="action-desc">View and manage student records</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Library Status -->
+        <div class="status-section">
+            <h2><i class="fas fa-chart-pie"></i> Library Status</h2>
+            <div class="status-grid">
+                <div class="status-item success">
+                    <div class="status-title">Availability Rate</div>
+                    <div class="status-value" th:text="${totalBooks > 0 ? ((availableBooks / totalBooks) * 100) : 0}">0</div>
+                    <div class="status-unit">%</div>
+                    <div class="status-desc">Books available for borrowing</div>
+                </div>
+                <div class="status-item info">
+                    <div class="status-title">Borrowing Rate</div>
+                    <div class="status-value" th:text="${totalBooks > 0 ? ((activeBorrows / totalBooks) * 100) : 0}">0</div>
+                    <div class="status-unit">%</div>
+                    <div class="status-desc">Books currently borrowed</div>
+                </div>
+                <div class="status-item warning">
+                    <div class="status-title">Overdue Rate</div>
+                    <div class="status-value" th:text="${activeBorrows > 0 ? ((overdueBooks / activeBorrows) * 100) : 0}">0</div>
+                    <div class="status-unit">%</div>
+                    <div class="status-desc">Of borrowed books are overdue</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

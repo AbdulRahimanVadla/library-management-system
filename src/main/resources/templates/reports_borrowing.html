@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Borrowing Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="full-container container-reports">
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i> Borrowing Activity Report</h1>
+            <p class="subtitle" th:text="'Active Borrows: ' + ${activeBorrowsCount}"></p>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a th:href="@{/}">Dashboard</a> > 
+            <a th:href="@{/reports/dashboard}">Reports</a> > 
+            <span>Borrowing Report</span>
+        </nav>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <div class="action-bar">
+            <a th:href="@{/reports/dashboard}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Reports</a>
+            <a th:href="@{/borrows/new}" class="btn btn-primary"><i class="fas fa-plus"></i> New Borrow</a>
+        </div>
+
+        <!-- Current Active Borrows -->
+        <div class="section">
+            <h3><i class="fas fa-clipboard-list"></i> Currently Active Borrows</h3>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Student Name</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Days Remaining</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="borrow : ${activeBorrows}">
+                            <td th:text="${borrow.book.title}"></td>
+                            <td th:text="${borrow.student.name}"></td>
+                            <td th:text="${#temporals.format(borrow.borrowDate, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#temporals.format(borrow.dueDate, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <span th:if="${borrow.dueDate.isBefore(T(java.time.LocalDate).now())}" 
+                                      style="color: #e74c3c; font-weight: bold;">
+                                    Overdue: [[${T(java.time.temporal.ChronoUnit).DAYS.between(borrow.dueDate, T(java.time.LocalDate).now())}]] days
+                                </span>
+                                <span th:unless="${borrow.dueDate.isBefore(T(java.time.LocalDate).now())}" 
+                                      style="color: #27ae60; font-weight: bold;">
+                                    [[${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), borrow.dueDate)}]] days
+                                </span>
+                            </td>
+                            <td>
+                                <span th:if="${borrow.dueDate.isBefore(T(java.time.LocalDate).now())}" 
+                                      class="badge badge-danger"><i class="fas fa-exclamation-triangle"></i> Overdue</span>
+                                <span th:unless="${borrow.dueDate.isBefore(T(java.time.LocalDate).now())}" 
+                                      th:classappend="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), borrow.dueDate) <= 3} ? 'badge badge-warning' : 'badge badge-success'">
+                                    <span th:if="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), borrow.dueDate) <= 3}">
+                                        <i class="fas fa-clock"></i> Due Soon
+                                    </span>
+                                    <span th:unless="${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), borrow.dueDate) <= 3}">
+                                        <i class="fas fa-check"></i> Active
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(activeBorrows)}">
+                            <td colspan="6" class="no-data">No active borrows found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Borrows (Last 30 days) -->
+        <div class="section">
+            <h3><i class="fas fa-history"></i> Recent Borrows (Last 30 Days)</h3>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Student Name</th>
+                            <th>Borrow Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="borrow : ${recentBorrows}">
+                            <td th:text="${borrow.book.title}"></td>
+                            <td th:text="${borrow.student.name}"></td>
+                            <td th:text="${#temporals.format(borrow.borrowDate, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${#temporals.format(borrow.dueDate, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <span th:if="${borrow.returned}" class="badge badge-success"><i class="fas fa-check"></i> Returned</span>
+                                <span th:unless="${borrow.returned}" class="badge badge-info"><i class="fas fa-clock"></i> Active</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(recentBorrows)}">
+                            <td colspan="5" class="no-data">No recent borrows found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Library Management System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="full-container container-dashboard">
+        <div class="container-content">
+            <header>
+                <h1><i class="fas fa-book"></i> Library Management System</h1>
+            </header>
+            
+            <nav class="main-nav">
+                <a th:href="@{/students}" class="nav-link"><i class="fas fa-users"></i> Manage Students</a>
+                <a th:href="@{/books}" class="nav-link"><i class="fas fa-book"></i> Manage Books</a>
+                <a th:href="@{/borrows/active}" class="nav-link"><i class="fas fa-clipboard-list"></i> Manage Borrows</a>
+                <a th:href="@{/reports/dashboard}" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a>
+            </nav>
+            
+            <main>
+                <div class="welcome-section">
+                    <h2>Welcome to LMS</h2>
+                    <p>Manage your library efficiently with our system</p>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3><i class="fas fa-users"></i> Total Students</h3>
+                        <p th:text="${studentCount}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-book"></i> Total Books</h3>
+                        <p th:text="${bookCount}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-check-circle"></i> Available Books</h3>
+                        <p th:text="${availableBookCount}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-clipboard-list"></i> Active Borrows</h3>
+                        <p th:text="${activeBorrowsCount}">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Overdue Books</h3>
+                        <p th:text="${overdueBooksCount}">0</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="action-grid">
+                    <a th:href="@{/students}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-users"></i></div>
+                        <div class="action-title">Manage Students</div>
+                        <div class="action-desc">Add, edit, or view students</div>
+                    </a>
+                    <a th:href="@{/books}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-book"></i></div>
+                        <div class="action-title">Manage Books</div>
+                        <div class="action-desc">Add, edit, or view books</div>
+                    </a>
+                    <a th:href="@{/borrows/new}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-plus"></i></div>
+                        <div class="action-title">Borrow Book</div>
+                        <div class="action-desc">Issue a new book to a student</div>
+                    </a>
+                    <a th:href="@{/borrows/active}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <div class="action-title">Active Borrows</div>
+                        <div class="action-desc">View current borrows</div>
+                    </a>
+                    <a th:href="@{/reports/dashboard}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-chart-bar"></i></div>
+                        <div class="action-title">View Reports</div>
+                        <div class="action-desc">Library statistics & analytics</div>
+                    </a>
+                    <a th:href="@{/borrows/overdue}" class="action-card">
+                        <div class="action-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="action-title">Overdue Books</div>
+                        <div class="action-desc">View overdue books report</div>
+                    </a>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

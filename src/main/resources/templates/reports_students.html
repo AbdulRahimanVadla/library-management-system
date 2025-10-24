@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Students Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="full-container container-reports">
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-users"></i> Students Report</h1>
+            <p class="subtitle" th:text="'Total Students: ' + ${totalStudents} + ' | With Active Borrows: ' + ${studentsWithActiveBorrows}"></p>
+        </header>
+        
+        <nav class="breadcrumb">
+            <a th:href="@{/}">Dashboard</a> > 
+            <a th:href="@{/reports/dashboard}">Reports</a> > 
+            <span>Students Report</span>
+        </nav>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <div class="action-bar">
+            <a th:href="@{/reports/dashboard}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Reports</a>
+            <a th:href="@{/students}" class="btn btn-primary"><i class="fas fa-cog"></i> Manage Students</a>
+            <a th:href="@{/borrows/new}" class="btn btn-success"><i class="fas fa-plus"></i> Borrow New Book</a>
+        </div>
+
+        <!-- Student Statistics -->
+        <div class="summary">
+            <div class="summary-item">
+                <div class="summary-label">Total Students</div>
+                <div class="summary-value" th:text="${totalStudents}">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">With Active Borrows</div>
+                <div class="summary-value" th:text="${studentsWithActiveBorrows}">0</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Without Active Borrows</div>
+                <div class="summary-value" th:text="${totalStudents - studentsWithActiveBorrows}">0</div>
+            </div>
+        </div>
+
+        <!-- Students List -->
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Student ID</th>
+                        <th>Active Borrows</th>
+                        <th>Borrowing Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="student : ${students}">
+                        <td th:text="${student.name}"></td>
+                        <td th:text="${student.email}"></td>
+                        <td th:text="${student.studentId}"></td>
+                        <td th:text="${student.activeBorrowCount}">0</td>
+                        <td>
+                            <span th:if="${student.activeBorrowCount > 0}" 
+                                  class="badge badge-warning"><i class="fas fa-book"></i> Has Active Borrows</span>
+                            <span th:unless="${student.activeBorrowCount > 0}" 
+                                  class="badge badge-success"><i class="fas fa-check"></i> No Active Borrows</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/borrows/history/{studentId}(studentId=${student.id})}" class="btn btn-info btn-sm">
+                                <i class="fas fa-history"></i> View History
+                            </a>
+                            <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-edit btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(students)}">
+                        <td colspan="6" class="no-data">No students found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
